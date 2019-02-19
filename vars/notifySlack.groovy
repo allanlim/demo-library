@@ -8,11 +8,11 @@ import net.sf.json.JSONObject;
 import hudson.tasks.test.AbstractTestResultAction;
 import hudson.model.Actionable;
 
-def call(String buildStatus = 'STARTED', String channel = '#jenkins') {
+def call(String buildStatus = 'STARTED', String channel = '#engineering') {
 
   // buildStatus of null means successfull
   buildStatus = buildStatus ?: 'SUCCESSFUL'
-  channel = channel ?: '#jenkins'
+  channel = channel ?: '#engineering'
 
 
   // Default values
@@ -23,10 +23,10 @@ def call(String buildStatus = 'STARTED', String channel = '#jenkins') {
   def title_link = "${env.RUN_DISPLAY_URL}"
   def branchName = "${env.BRANCH_NAME}"
 
-  def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
-  def author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an'").trim()
+  def commit = bat(returnStdout: true, script: 'git rev-parse HEAD')
+  def author = bat(returnStdout: true, script: "git --no-pager show -s --format='%an'").trim()
 
-  def message = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
+  def message = bat(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
 
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
