@@ -24,7 +24,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def title_link = "${env.RUN_DISPLAY_URL}"
   def branchName = "${env.BRANCH_NAME}"
   
-  def getCommandOutput(cmd) {
+  def getCommandOutput(String... cmd) {
        stdout = bat(returnStdout: true, script: cmd).trim()
        result = stdout.readLines().drop(1).join(" ")       
        return result
