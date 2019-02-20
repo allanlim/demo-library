@@ -23,14 +23,10 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
   def branchName = "${env.BRANCH_NAME}"
-    
-  def commit_unf = 'git rev-parse HEAD'
-  def author_unf = "git --no-pager show -s --format='%an'"
-  def message_unf = 'git log -1 --pretty=%B'
-  
-  def commit = getCommandOutput(commit_unf)
-  def author = getCommandOutput(author_unf)
-  def message = getCommandOutput(message_unf)
+
+  def commit = "${env.GIT_COMMIT}"
+  def author = "${env.GIT_AUTHOR}"
+  def message = bat(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
 
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
@@ -47,11 +43,6 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     colorCode = 'danger'
   }
   
-  def getCommandOutput(String... args) {
-       stdout = bat(returnStdout: true, script: args).trim()
-       result = stdout.readLines().drop(1).join(" ")       
-       return result
-  }
   // get test results for slack message
   @NonCPS
   def getTestSummary = { ->
