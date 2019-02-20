@@ -10,8 +10,8 @@ import hudson.model.Actionable;
 
 def call(String buildStatus = 'STARTED', String channel = '#engineering') {
 
-  // buildStatus of null means successfull
-  buildStatus = buildStatus ?: 'SUCCESSFUL'
+  // buildStatus of null means success
+  buildStatus = buildStatus ?: 'SUCCESS'
   channel = channel ?: '#engineering'
 
   // 
@@ -32,7 +32,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   if (buildStatus == 'STARTED') {
     color = 'GREEN'
     colorCode = '#2EB886'
-  } else if (buildStatus == 'SUCCESSFUL') {
+  } else if (buildStatus == 'SUCCESS') {
     color = 'GREEN'
     colorCode = '#2EB886'
   } else if (buildStatus == 'UNSTABLE') {
