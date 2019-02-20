@@ -26,7 +26,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
 
   def commit = "${env.GIT_COMMIT}"
   def author = "${env.GIT_AUTHOR}"
-  def message = bat(returnStdout: true, script: 'git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit').trim()
+  def message = bat(returnStdout: true, script: 'git log --graph --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit').trim()
 
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
