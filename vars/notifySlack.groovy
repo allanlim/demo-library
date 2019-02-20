@@ -64,7 +64,6 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     return summary
   }
   
-  @NonCPS
   def getChangeString() {
     MAX_MSG_LEN = 100
     def changeString = ""
