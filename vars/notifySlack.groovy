@@ -23,13 +23,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
   def branchName = "${env.BRANCH_NAME}"
-  
-  def getCommandOutput(String args) {
-       stdout = bat(returnStdout: true, script: args).trim()
-       result = stdout.readLines().drop(1).join(" ")       
-       return result
-  }
-  
+    
   def commit_unf = 'git rev-parse HEAD'
   def author_unf = "git --no-pager show -s --format='%an'"
   def message_unf = 'git log -1 --pretty=%B'
@@ -52,7 +46,12 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     color = 'RED'
     colorCode = 'danger'
   }
-
+  
+  def getCommandOutput(String... args) {
+       stdout = bat(returnStdout: true, script: args).trim()
+       result = stdout.readLines().drop(1).join(" ")       
+       return result
+  }
   // get test results for slack message
   @NonCPS
   def getTestSummary = { ->
