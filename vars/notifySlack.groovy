@@ -17,30 +17,29 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   // 
 
   // Default values
-  def colorName = 'RED'
-  def colorCode = '#FF0000'
-  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] (<${env.RUN_DISPLAY_URL}|Open>) (<${env.RUN_CHANGES_DISPLAY_URL}|  Changes>)'"
+  def colorName = 'GREEN'
+  def colorCode = '#2EB886'
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
-  def branchName = "${env.GIT_BRANCH}"
+  def branchName = "${GIT_BRANCH}"
 
-  def commit = "${env.GIT_COMMIT}"
-  def author = "${env.GIT_AUTHOR}"
-  def message = bat(returnStdout: true, script: 'git log --pretty=oneline').trim()
+  def commit = "${GIT_COMMIT}"
+  def author = "${GIT_AUTHOR}"
+  def message = bat(returnStdout: true, script: 'git log --pretty=format:"%h - %an, %ar : %s"').trim()
 
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
-    color = 'YELLOW'
-    colorCode = '#FFFF00'
+    color = 'GREEN'
+    colorCode = '#2EB886'
   } else if (buildStatus == 'SUCCESSFUL') {
     color = 'GREEN'
-    colorCode = 'good'
+    colorCode = '#2EB886'
   } else if (buildStatus == 'UNSTABLE') {
     color = 'YELLOW'
-    colorCode = 'warning'
+    colorCode = '#DAA038'
   } else {
     color = 'RED'
-    colorCode = 'danger'
+    colorCode = '#A30200'
   }
   
   // get test results for slack message
