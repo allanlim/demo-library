@@ -8,13 +8,14 @@ import net.sf.json.JSONObject;
 import hudson.tasks.test.AbstractTestResultAction;
 import hudson.model.Actionable;
 
+class notifySlack 
+{
+
 def call(String buildStatus = 'STARTED', String channel = '#engineering') {
 
   // buildStatus of null means success
   buildStatus = buildStatus ?: 'SUCCESS'
   channel = channel ?: '#engineering'
-
-  // 
 
   // Default values
   def colorName = 'GREEN'
@@ -64,6 +65,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     return summary
   }
   
+  @NonCPS
   def getChangeString() {
     MAX_MSG_LEN = 100
     def changeString = ""
@@ -126,5 +128,5 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
 
   // Send notifications
   slackSend (color: colorCode, message: subject, attachments: attachments.toString(), channel: channel)
-
+  }
 }
