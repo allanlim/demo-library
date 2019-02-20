@@ -19,6 +19,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   // Default values
   def colorName = 'GREEN'
   def colorCode = '#2EB886'
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
   def branchName = "${env.BRANCH_NAME}"
