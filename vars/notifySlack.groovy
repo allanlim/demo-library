@@ -25,7 +25,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def branchName = "${env.BRANCH_NAME}"
 
   def commit = "${env.GIT_COMMIT}"
-  def author = "${env.GIT_AUTHOR}"
+  def author = "${env.GIT_AUTHOR_NAME}"
   def message = getChangeString()
 
   // Override default values based on build status
