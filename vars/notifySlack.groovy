@@ -26,6 +26,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   
   def commit = "${env.GIT_COMMIT}"
   def author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
+  def committer = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%cN", returnStdout: true).trim()
   def message = getChangeString()
 
   // Override default values based on build status
