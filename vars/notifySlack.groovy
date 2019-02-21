@@ -22,10 +22,10 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
-  def branchName = bat(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD')
+  def branchName = "${env.GIT_BRANCH}"
   
-  def commit = bat(returnStdout: true, script: 'git rev-parse HEAD')
-  def author = bat(returnStdout: true, script: 'git --no-pager show -s').trim()
+  def commit = "${env.GIT_COMMIT}"
+  def author = "${env.GIT_AUTHOR_NAME}"
   def message = getChangeString()
 
   // Override default values based on build status
