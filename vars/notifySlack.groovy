@@ -114,13 +114,13 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     def changeString = ""
 
     echo "Gathering SCM changes"
-    def changeLogSets = currentBuild.changeSets
+    def changeLogSets = currentBuild.changeSets.collect
     for (int i = 0; i < changeLogSets.size(); i++) {
         def entries = changeLogSets[i].items
         for (int j = 0; j < entries.length; j++) {
             def entry = entries[j]
             truncated_msg = entry.msg.take(MAX_MSG_LEN)
-            comitter = entry.author.id
+            comitter = entry.author.fullName
             commit = entry.commitId.take(7)
             // files = entry.file.editType.name
           changeString += "${commit} - ${truncated_msg} [${comitter}]\n"
