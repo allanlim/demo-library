@@ -81,22 +81,22 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   attachment.put('mrkdwn_in', ["fields"])
   // JSONObject for branch
   JSONObject branch = new JSONObject();
-  branch.put('title', 'Branch');
+  branch.put('title', 'Branch:');
   branch.put('value', branchName.toString());
   branch.put('short', true);
   // JSONObject for author
   JSONObject commitAuthor = new JSONObject();
-  commitAuthor.put('title', 'Author');
+  commitAuthor.put('title', 'Author:');
   commitAuthor.put('value', author.toString());
   commitAuthor.put('short', true);
   // JSONObject for branch
   JSONObject commitMessage = new JSONObject();
-  commitMessage.put('title', 'Commit Message');
+  commitMessage.put('title', 'Commit Message:');
   commitMessage.put('value', message.toString());
   commitMessage.put('short', false);
   // JSONObject for test results
   JSONObject testResults = new JSONObject();
-  testResults.put('title', 'Test Summary')
+  testResults.put('title', 'Test Summary:')
   testResults.put('value', testSummary.toString())
   testResults.put('short', false)
   attachment.put('fields', [branch, commitAuthor, commitMessage, testResults]);
@@ -120,12 +120,13 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
         for (int j = 0; j < entries.length; j++) {
             def entry = entries[j]
             truncated_msg = entry.msg.take(MAX_MSG_LEN)
-            changeString += " - ${truncated_msg} [${entry.author}]\n"
+            comitter = entry.author
+            changeString += " - ${truncated_msg} [${comitter}]\n"
         }
     }
 
     if (!changeString) {
-        changeString = " - No new changes"
+        changeString = " - No new changes!"
     }
     return changeString
   }
