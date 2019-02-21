@@ -121,8 +121,8 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
             def entry = entries[j]
             truncated_msg = entry.msg.take(MAX_MSG_LEN)
             comitter = entry.author.id
-            commit = entry.commitId
-            files = entry.file.editType.name
+            // commit = entry.commitId
+            // files = entry.file.editType.name
           changeString += " - ${truncated_msg} [${comitter}]\n"
         }
     }
