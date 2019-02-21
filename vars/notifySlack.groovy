@@ -22,7 +22,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
-  def branchName = 'bat(script: '@git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()'
+  def branchName = 'bat(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()'
   
   def commit = "${env.GIT_COMMIT}"
   def author = "${env.GIT_AUTHOR_NAME}"
