@@ -120,8 +120,10 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
         for (int j = 0; j < entries.length; j++) {
             def entry = entries[j]
             truncated_msg = entry.msg.take(MAX_MSG_LEN)
-            comitter = entry.author.get
+            fullcommit = entry.commitId
+            comitter = bat(script: "@echo off\ngit log -n 1 ${fullcommit} --format=%%cN", returnStdout: true).trim()
             commit = entry.commitId.take(7)
+            
             // files = entry.file.editType.name
           changeString += "${commit} - ${truncated_msg} [${comitter}]\n"
         }
