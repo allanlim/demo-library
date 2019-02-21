@@ -123,7 +123,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
             comitter = entry.author.id
             commit = entry.commitId
             files = entry.file.editType.name
-          changeString += "${commit} - ${truncated_msg} for ${files} [${comitter}]\n"
+          changeString += " - ${truncated_msg} [${comitter}]\n"
         }
     }
 
