@@ -25,7 +25,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def branchName = bat(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD')
   
   def commit = bat(returnStdout: true, script: 'git rev-parse HEAD')
-  def author = bat(returnStdout: true, script: "git --no-pager show -s --format='%an'").trim()
+  def author = bat(returnStdout: true, script: 'git --no-pager show -s').trim()
   def message = getChangeString()
 
   // Override default values based on build status
