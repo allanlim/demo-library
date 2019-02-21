@@ -128,4 +128,3 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     }
     return changeString
   }
-}
