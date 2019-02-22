@@ -119,7 +119,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
         def entries = changeLogSets[i].items
         for (int j = 0; j < entries.length; j++) {
             def entry = entries[j]
-            truncated_msg = entry.msg.take(MAX_MSG_LEN)
+            truncated_msg = entry.msg
             committer = entry.author
             commit = entry.commitId.take(7)
             
