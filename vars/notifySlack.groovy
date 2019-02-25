@@ -26,11 +26,16 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def branchName = "${ghprbTargetBranch}"
   
   def commit = "${env.GIT_COMMIT}"
-  def author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
-  def committer = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%cN", returnStdout: true).trim()
-  def message = getChangeString()
-  //def message = bat(script: "@echo off\ngit rev-list --no-walk ${env.GIT_COMMIT}, returnStdout: true).trim()
-
+  //def author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
+  def author = "${ghprbActualCommitAuthor}"
+  //def committer = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%cN", returnStdout: true).trim()
+  def message = "${ghprbPullLongDescription}"
+  def commits = getChangeString()
+  
+  //if (author == 'null') {
+  //  author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
+  //} 
+  
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
     color = 'GREEN'
@@ -69,7 +74,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
  
   def testSummaryRaw = getTestSummary()
   // format test summary as a code block
-  def testSummary = "`${testSummaryRaw}`"
+  def testSummary = "${testSummaryRaw}"
   println testSummary.toString()
 
   JSONObject attachment = new JSONObject();
@@ -91,17 +96,22 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   commitAuthor.put('title', 'Author:');
   commitAuthor.put('value', author.toString());
   commitAuthor.put('short', true);
-  // JSONObject for branch
+  // JSONObject for commit message
   JSONObject commitMessage = new JSONObject();
   commitMessage.put('title', 'Commit Message:');
   commitMessage.put('value', message.toString());
+  commitMessage.put('short', false);
+  // JSONObject for commits to pull request
+  JSONObject allCommits = new JSONObject();
+  commitMessage.put('title', 'Commits:');
+  commitMessage.put('value', commits.toString());
   commitMessage.put('short', false);
   // JSONObject for test results
   JSONObject testResults = new JSONObject();
   testResults.put('title', 'Test Summary:')
   testResults.put('value', testSummary.toString())
   testResults.put('short', false)
-  attachment.put('fields', [branch, commitAuthor, commitMessage, testResults]);
+  attachment.put('fields', [branch, commitAuthor, commitMessage, allCommits, testResults]);
   JSONArray attachments = new JSONArray();
   attachments.add(attachment);
   println attachments.toString()
@@ -112,11 +122,10 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
 
   @NonCPS
   def getChangeString() {
-    MAX_MSG_LEN = 100
+    
     def changeString = ""
-
-    echo "Gathering SCM changes"
     def changeLogSets = currentBuild.changeSets
+    
     for (int i = 0; i < changeLogSets.size(); i++) {
         def entries = changeLogSets[i].items
         for (int j = 0; j < entries.length; j++) {
@@ -133,7 +142,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     }
 
     if (!changeString) {
-        changeString = " - No new changes!"
+        changeString = "No new changes! :santas-not-happy:"
     }
     return changeString
   }
