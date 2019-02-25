@@ -123,12 +123,12 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
             def entry = entries[j]
             truncated_msg = entry.msg
             committer = entry.author
-            fullCommit = entry.commit
-            
+            fullCommit = entry.commitId
+            commitLink = "https://github.com/ForcuraCo/forcura-coreapp/commit/${fullCommit}"
             commit = entry.commitId.take(7)
             
             // files = entry.file.editType.name
-          changeString += "<${commit}> - ${truncated_msg} [${committer}]\n"
+          changeString += "<${commitLink}|${commit}> - ${truncated_msg} [${committer}]\n"
         }
     }
 
