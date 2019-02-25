@@ -23,7 +23,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
   //def branchName = "${env.GIT_BRANCH}"
-  def branchName = "${ghprbTargetBranch}
+  def branchName = "${ghprbTargetBranch}"
   
   def commit = "${env.GIT_COMMIT}"
   def author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
@@ -123,10 +123,12 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
             def entry = entries[j]
             truncated_msg = entry.msg
             committer = entry.author
+            fullCommit = entry.commit
+            
             commit = entry.commitId.take(7)
             
             // files = entry.file.editType.name
-          changeString += "${commit} - ${truncated_msg} [${committer}]\n"
+          changeString += "<${commit}> - ${truncated_msg} [${committer}]\n"
         }
     }
 
