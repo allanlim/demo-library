@@ -113,9 +113,9 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   commitMessage.put('short', false);
   // JSONObject for commits to pull request
   JSONObject allCommits = new JSONObject();
-  commitMessage.put('title', 'Commits:');
-  commitMessage.put('value', commits.toString());
-  commitMessage.put('short', false);
+  allCommits.put('title', 'Commits:');
+  allCommits.put('value', commits.toString());
+  allCommits.put('short', false);
   // JSONObject for test results
   JSONObject testResults = new JSONObject();
   testResults.put('title', 'Test Summary:')
