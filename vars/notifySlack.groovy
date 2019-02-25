@@ -30,6 +30,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def author = "${ghprbActualCommitAuthor}"
   //def committer = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%cN", returnStdout: true).trim()
   def message = "${ghprbPullLongDescription}"
+  def pullTitle = "${ghprbPullTitle}"
   def commits = getChangeString()
   
   // If a manual re-build is triggered the original commit author will be blank, this serves as a check to add an author
@@ -65,10 +66,9 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
         def skipped = testResultAction.getSkipCount()
         def failedTests = testResultAction.getFailedTests()
         echo "These are the failed tests: ${failedTests}"
-        echo "The failedTests length is: ${failedTests}.length"
         
         // If the unit tests found a failed test result it will be included in the Slack message otherwise nah 
-        if (failedTests.length != 0) {
+        if (failedTests.isEmpty() != true) {
           summary = "Test results:\n\t"
           summary = summary + ("Passed: " + (total - failed - skipped))
           summary = summary + (", Failed: " + failed + " ${testResultAction.failureDiffString}")
@@ -112,12 +112,12 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   commitAuthor.put('short', true);
   // JSONObject for commit message
   JSONObject commitMessage = new JSONObject();
-  commitMessage.put('title', 'Commit Message:');
+  commitMessage.put('title', pullTitle.toString());
   commitMessage.put('value', message.toString());
   commitMessage.put('short', false);
   // JSONObject for commits to pull request
   JSONObject allCommits = new JSONObject();
-  allCommits.put('title', 'Commits:');
+  allCommits.put('title', 'Changelog:');
   allCommits.put('value', commits.toString());
   allCommits.put('short', false);
   // JSONObject for test results
