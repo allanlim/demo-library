@@ -32,6 +32,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def message = "${ghprbPullLongDescription}"
   def commits = getChangeString()
   
+  // If a manual re-build is triggered the original commit author will be blank, this serves as a check to add an author
   if (author == "") {
     author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
   } 
@@ -51,25 +52,28 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     colorCode = '#A30200'
   }
   
-  // get test results for slack message
+  // Get test results for slack message
   @NonCPS
   def getTestSummary = { ->
     def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
     def summary = ""
-
+    
+    // If the unit tests fail to execute, no unit tests will be sent to Slack
     if (testResultAction != null) {
         def total = testResultAction.getTotalCount()
         def failed = testResultAction.getFailCount()
         def skipped = testResultAction.getSkipCount()
         def failedTests = testResultAction.getFailedTests()
         echo "These are the failed tests: ${failedTests}"
+        echo "The failedTests length is: ${failedTests}.length"
         
-        if (failedTests != null) {
+        // If the unit tests found a failed test result it will be included in the Slack message otherwise nah 
+        if (failedTests.length != 0) {
           summary = "Test results:\n\t"
           summary = summary + ("Passed: " + (total - failed - skipped))
           summary = summary + (", Failed: " + failed + " ${testResultAction.failureDiffString}")
           summary = summary + (", Skipped: " + skipped)
-          summary = summary + ("\nFailed tests:\t" + failedTests)
+          summary = summary + ("\nFailed tests:\n\t" + failedTests)
         } else {
           summary = "Test results:\n\t"
           summary = summary + ("Passed: " + (total - failed - skipped))
@@ -130,6 +134,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   slackSend (color: colorCode, message: subject, attachments: attachments.toString(), channel: channel)  
   }
 
+  // Iterates through the commit changelog between the remote and target repo's so it cab be sent in the Slack message
   @NonCPS
   def getChangeString() {
     
