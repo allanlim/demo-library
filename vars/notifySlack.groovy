@@ -32,9 +32,9 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def message = "${ghprbPullLongDescription}"
   def commits = getChangeString()
   
-  //if (author == 'null') {
-  //  author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
-  //} 
+  if (author == "") {
+    author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
+  } 
   
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
@@ -61,13 +61,23 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
         def total = testResultAction.getTotalCount()
         def failed = testResultAction.getFailCount()
         def skipped = testResultAction.getSkipCount()
-
-        summary = "Test results:\n\t"
-        summary = summary + ("Passed: " + (total - failed - skipped))
-        summary = summary + (", Failed: " + failed + " ${testResultAction.failureDiffString}")
-        summary = summary + (", Skipped: " + skipped)
+        def failedTests = testResultAction.getFailedTests()
+        echo "These are the failed tests: ${failedTests}"
+        
+        if (failedTests != null) {
+          summary = "Test results:\n\t"
+          summary = summary + ("Passed: " + (total - failed - skipped))
+          summary = summary + (", Failed: " + failed + " ${testResultAction.failureDiffString}")
+          summary = summary + (", Skipped: " + skipped)
+          summary = summary + ("\nFailed tests:\t" + failedTests)
+        } else {
+          summary = "Test results:\n\t"
+          summary = summary + ("Passed: " + (total - failed - skipped))
+          summary = summary + (", Failed: " + failed + " ${testResultAction.failureDiffString}")
+          summary = summary + (", Skipped: " + skipped)
+        }
     } else {
-        summary = "No tests found"
+        summary = "No tests found! :santas-not-happy:"
     }
     return summary
   }
@@ -132,12 +142,13 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
             def entry = entries[j]
             truncated_msg = entry.msg
             committer = entry.author
-            fullCommit = entry.commitId
-            commitLink = "https://github.com/ForcuraCo/forcura-coreapp/commit/${fullCommit}"
+            //fullCommit = entry.commitId
+            //commitLink = "https://github.com/ForcuraCo/forcura-coreapp/commit/${fullCommit}"
             commit = entry.commitId.take(7)
             
             // files = entry.file.editType.name
-          changeString += "<${commitLink}|${commit}> - ${truncated_msg} [${committer}]\n"
+          //changeString += "<${commitLink}|${commit}> - ${truncated_msg} [${committer}]\n"
+          changeString += "${commit} - ${truncated_msg} [${committer}]\n"
         }
     }
 
