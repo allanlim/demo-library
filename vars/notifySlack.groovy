@@ -22,12 +22,14 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
   def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
-  def branchName = "${env.GIT_BRANCH}"
+  // def branchName = "${env.GIT_BRANCH}"
+  def branchName = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --pretty=%d HEAD", returnStdout: true).trim()
   
   def commit = "${env.GIT_COMMIT}"
   def author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
   def committer = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%cN", returnStdout: true).trim()
-  def message = getChangeString()
+  // def message = getChangeString()
+  def message = bat(script: "@echo off\ngit rev-list --no-walk ${env.GIT_COMMIT}, returnStdout: true).trim()
 
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
