@@ -19,9 +19,10 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   // Default values
   def colorName = 'GREEN'
   def colorCode = '#2EB886'
-  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
-  def title = "${env.JOB_NAME} Build: ${env.BUILD_NUMBER}"
+  def subject = "${buildStatus}: ${env.JOB_NAME} - #${env.BUILD_NUMBER} after ${currentBuild.duration}"
+  def title = "${env.JOB_NAME} Build: #${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
+  def pullRequest = "${ghprbPullDescription}"
   //def branchName = "${env.GIT_BRANCH}"
   def branchName = "${ghprbTargetBranch}"
   
@@ -65,15 +66,19 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
         def failed = testResultAction.getFailCount()
         def skipped = testResultAction.getSkipCount()
         def failedTests = testResultAction.getFailedTests()
+        def failedTestsString = ""
         echo "These are the failed tests: ${failedTests}"
         
         // If the unit tests found a failed test result it will be included in the Slack message otherwise nah 
         if (failedTests.isEmpty() != true) {
+          for(CaseResult result : failedTests) {
+            failedTestsString = failedTestsString + "${result.getFullName()} : ${result.getErrorDetails()}\n\t"
+          }
           summary = "Test results:\n\t"
           summary = summary + ("Passed: " + (total - failed - skipped))
           summary = summary + (", Failed: " + failed + " ${testResultAction.failureDiffString}")
           summary = summary + (", Skipped: " + skipped)
-          summary = summary + ("\nFailed tests:\n\t" + failedTests)
+          summary = summary + ("\nFailed tests:\n\t" + failedTestsString)
         } else {
           summary = "Test results:\n\t"
           summary = summary + ("Passed: " + (total - failed - skipped))
@@ -131,10 +136,10 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   println attachments.toString()
 
   // Send notifications
-  slackSend (color: colorCode, message: subject, attachments: attachments.toString(), channel: channel)  
+  slackSend (color: colorCode, message: pullRequest, attachments: attachments.toString(), channel: channel)  
   }
 
-  // Iterates through the commit changelog between the remote and target repo's so it cab be sent in the Slack message
+  // Iterates through the commit changelog between the remote and target repo's so it can be sent in the Slack message
   @NonCPS
   def getChangeString() {
     
