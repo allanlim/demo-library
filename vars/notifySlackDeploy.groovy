@@ -22,22 +22,12 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def subject = "${buildStatus} after ${currentBuild.durationString}"
   def title = "${env.JOB_NAME} - Build #${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
-  def pullRequest = "${ghprbPullDescription}"
-  //def branchName = "${env.GIT_BRANCH}"
-  def branchName = "${ghprbTargetBranch}"
+  def branchName = "${env.GIT_BRANCH}"
   
   def commit = "${env.GIT_COMMIT}"
-  //def author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
-  def author = "${ghprbActualCommitAuthor}"
+  def author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
   //def committer = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%cN", returnStdout: true).trim()
-  def message = "${ghprbPullLongDescription}"
-  def pullTitle = "${ghprbPullTitle}"
   def commits = getChangeString()
-  
-  // If a manual re-build is triggered the original commit author will be blank, this serves as a check to add an author
-  if (author == "") {
-    author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
-  } 
   
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
@@ -113,11 +103,6 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   commitAuthor.put('title', 'Author:');
   commitAuthor.put('value', author.toString());
   commitAuthor.put('short', true);
-  // JSONObject for commit message
-  JSONObject commitMessage = new JSONObject();
-  commitMessage.put('title', pullTitle.toString() + ':');
-  commitMessage.put('value', message.toString());
-  commitMessage.put('short', false);
   // JSONObject for commits to pull request
   JSONObject allCommits = new JSONObject();
   allCommits.put('title', 'Changelog:');
@@ -128,13 +113,13 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   testResults.put('title', 'Test Summary:')
   testResults.put('value', testSummary.toString())
   testResults.put('short', false)
-  attachment.put('fields', [branch, commitAuthor, commitMessage, allCommits, testResults]);
+  attachment.put('fields', [branch, commitAuthor, allCommits, testResults]);
   JSONArray attachments = new JSONArray();
   attachments.add(attachment);
   println attachments.toString()
 
   // Send notifications
-  slackSend (color: colorCode, message: pullRequest, attachments: attachments.toString(), channel: channel)  
+  slackSend (color: colorCode, attachments: attachments.toString(), channel: channel)  
   }
 
   // Iterates through the commit changelog between the remote and target repo's so it can be sent in the Slack message
