@@ -71,7 +71,8 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
         
         // If the unit tests found a failed test result it will be included in the Slack message otherwise nah 
         if (failedTests.isEmpty() != true) {
-          for(CaseResult result : failedTests) {
+          List<CaseResult> failedListTests = failedTests
+          for(CaseResult result : failedListTests) {
             failedTestsString = failedTestsString + "${result.getFullName()} : ${result.getErrorDetails()}\n\t"
           }
           summary = "Test results:\n\t"
