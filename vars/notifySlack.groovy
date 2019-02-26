@@ -19,8 +19,8 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   // Default values
   def colorName = 'GREEN'
   def colorCode = '#2EB886'
-  def subject = "${buildStatus}: ${env.JOB_NAME} - #${env.BUILD_NUMBER} after ${currentBuild.duration}"
-  def title = "${env.JOB_NAME} Build: #${env.BUILD_NUMBER}"
+  def subject = "${buildStatus} after ${currentBuild.durationString}"
+  def title = "${env.JOB_NAME} - Build #${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
   def pullRequest = "${ghprbPullDescription}"
   //def branchName = "${env.GIT_BRANCH}"
