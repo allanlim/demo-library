@@ -51,6 +51,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   @NonCPS
   def getTestSummary = { ->
     def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+    def testResultActionz = currentBuild.rawBuild.getAction(TestResultAction.class)
     def summary = ""
     
     // If the unit tests fail to execute, no unit tests will be sent to Slack
@@ -58,7 +59,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
         def total = testResultAction.getTotalCount()
         def failed = testResultAction.getFailCount()
         def skipped = testResultAction.getSkipCount()
-        def failedTests = getFailedUnitTestz()
+        def failedTests = testResultActionz.getFailedTests()
         //def failedTestsString = failedTests.join(', ')
         echo "These are the failed tests: ${failedTests}"
         //echo "These are the failed tests as a string: ${failedTestsString}"
@@ -153,7 +154,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     }
     return changeString
   }
-
+/*
   @NonCPS
   def getFailedUnitTestz() {
         List<TestResultAction> actions = currentBuild.rawBuild.getAction(TestResultAction.class)
@@ -167,3 +168,4 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
        }
        return builder.toString();
        }
+*/
