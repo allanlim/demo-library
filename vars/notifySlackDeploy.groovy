@@ -63,19 +63,6 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
         echo "These are the failed tests: ${failedTests}"
         //echo "These are the failed tests as a string: ${failedTestsString}"
         
-     def getFailedUnitTestz() {
-        List<AbstractTestResultAction> actions = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
-        StringBuilder builder = new StringBuilder()
-        for (AbstractTestResultAction action : actions) {
-           List<CaseResult> failedTestz = action.getFailedTests()
-           for (CaseResult result : failedTestz) {
-               builder.append(result.getTitle() + " - ")
-               builder.append(result.getErrorDetails() + "\n\t")
-           }
-       }
-       return builder.toString();
-       }
-        
         // If the unit tests found a failed test result it will be included in the Slack message otherwise nah 
         if (failedTests.isEmpty() != true) {
           summary = "Test results:\n\t"
@@ -166,3 +153,17 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     }
     return changeString
   }
+
+  @NonCPS
+  def getFailedUnitTestz() {
+        List<AbstractTestResultAction> actions = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+        StringBuilder builder = new StringBuilder()
+        for (AbstractTestResultAction action : actions) {
+           List<CaseResult> failedTestz = action.getFailedTests()
+           for (CaseResult result : failedTestz) {
+               builder.append(result.getTitle() + " - ")
+               builder.append(result.getErrorDetails() + "\n\t")
+           }
+       }
+       return builder.toString();
+       }
