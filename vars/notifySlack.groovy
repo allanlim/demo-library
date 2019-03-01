@@ -7,6 +7,8 @@ package hudson.tasks.junit;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import groovy.json.JsonOutput
+import java.util.Optional
 import hudson.tasks.test.AbstractTestResultAction;
 import hudson.model.Actionable;
 
