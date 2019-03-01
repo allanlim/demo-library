@@ -58,10 +58,23 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
         def total = testResultAction.getTotalCount()
         def failed = testResultAction.getFailCount()
         def skipped = testResultAction.getSkipCount()
-        def failedTests = testResultAction.getFailedTests()
-        def failedTestsString = failedTests.join(', ')
+        def failedTests = getFailedUnitTestz()
+        //def failedTestsString = failedTests.join(', ')
         echo "These are the failed tests: ${failedTests}"
-        echo "These are the failed tests as a string: ${failedTestsString}"
+        //echo "These are the failed tests as a string: ${failedTestsString}"
+        
+     def getFailedUnitTestz() {
+        List<AbstractTestResultAction> actions = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+        StringBuilder builder = new StringBuilder()
+        for (AbstractTestResultAction action : actions) {
+           List<CaseResult> failedTestz = action.getFailedTests()
+           for (CaseResult result : failedTestz) {
+               builder.append(result.getTitle() + " - ")
+               builder.append(result.getErrorDetails() + "\n\t")
+           }
+       }
+       return builder.toString();
+       }
         
         // If the unit tests found a failed test result it will be included in the Slack message otherwise nah 
         if (failedTests.isEmpty() != true) {
@@ -69,7 +82,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
           summary = summary + ("Passed: " + (total - failed - skipped))
           summary = summary + (", Failed: " + failed + " ${testResultAction.failureDiffString}")
           summary = summary + (", Skipped: " + skipped)
-          summary = summary + ("\nFailed tests:\n\t" + failedTestsString)
+          summary = summary + ("\nFailed tests:\n\t" + failedTests)
         } else {
           summary = "Test results:\n\t"
           summary = summary + ("Passed: " + (total - failed - skipped))
