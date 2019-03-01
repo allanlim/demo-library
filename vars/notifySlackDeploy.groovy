@@ -158,7 +158,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def getFailedUnitTestz() {
         List<TestResultAction> actions = currentBuild.rawBuild.getAction(TestResultAction.class)
         StringBuilder builder = new StringBuilder()
-        for (AbstractTestResultAction action : actions) {
+        for (TestResultAction action : actions) {
            List<CaseResult> failedTestz = action.getFailedTests()
            for (CaseResult result : failedTestz) {
                builder.append(result.getTitle() + " - ")
