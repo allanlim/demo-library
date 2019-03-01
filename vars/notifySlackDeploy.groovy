@@ -53,7 +53,6 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   @NonCPS
   def getTestSummary = { ->
     def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
-    //def testResultActionz = currentBuild.rawBuild.getAction(TestResultAction.class)
     def summary = ""
     
     // If the unit tests fail to execute, no unit tests will be sent to Slack
@@ -68,17 +67,17 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
         
         // If the unit tests found a failed test result it will be included in the Slack message otherwise nah 
         if (failedTests.isEmpty() != true) {
-          for(CaseResult cr : failedTests) {
-            failedTestsString = failedTestsString + "${cr.getFullDisplayName()}: ${cr.getErrorDetails()}\n\t"
+          for(CaseResult result : failedTests) {
+            failedTestsString = failedTestsString + "- ${result.getFullDisplayName()}\n\t"
           }
           
-          summary = "Test results:\n\t"
+          summary = "Test Results:\n\t"
           summary = summary + ("Passed: " + (total - failed - skipped))
           summary = summary + (", Failed: " + failed + " ${testResultAction.failureDiffString}")
           summary = summary + (", Skipped: " + skipped)
-          summary = summary + ("\nFailed tests:\n\t" + failedTestsString)
+          summary = summary + ("\n" + failed + " Failed Tests:\n\t" + failedTestsString)
         } else {
-          summary = "Test results:\n\t"
+          summary = "Test Results:\n\t"
           summary = summary + ("Passed: " + (total - failed - skipped))
           summary = summary + (", Failed: " + failed + " ${testResultAction.failureDiffString}")
           summary = summary + (", Skipped: " + skipped)
@@ -160,18 +159,3 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     }
     return changeString
   }
-/*
-  @NonCPS
-  def getFailedUnitTestz() {
-        List<TestResultAction> actions = currentBuild.rawBuild.getAction(TestResultAction.class)
-        def builder = new StringBuilder()
-        for (TestResultAction action : actions) {
-           List<CaseResult> failedTestz = action.getFailedTests()
-           for (CaseResult result : failedTestz) {
-               builder.append(result.getTitle() + " - ")
-               builder.append(result.getErrorDetails() + "\n\t")
-           }
-       }
-       return builder.toString();
-       }
-*/
