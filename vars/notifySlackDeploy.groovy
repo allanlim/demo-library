@@ -157,7 +157,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   @NonCPS
   def getFailedUnitTestz() {
         List<TestResultAction> actions = currentBuild.rawBuild.getAction(TestResultAction.class)
-        StringBuilder builder = new StringBuilder()
+        def builder = new StringBuilder()
         for (TestResultAction action : actions) {
            List<CaseResult> failedTestz = action.getFailedTests()
            for (CaseResult result : failedTestz) {
