@@ -3,6 +3,9 @@
 /**
 * notify slack and set message based on build status
 */
+
+package hudson.tasks.junit;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import hudson.tasks.test.AbstractTestResultAction;
@@ -127,7 +130,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def getChangeString() {
     
     def changeString = ""
-    def changeLogSets = currentBuild.changeSets
+    def changeLogSets = currentBuild.rawBuild.changeSets
     
     for (int i = 0; i < changeLogSets.size(); i++) {
         def entries = changeLogSets[i].items
