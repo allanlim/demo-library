@@ -51,7 +51,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   @NonCPS
   def getTestSummary = { ->
     def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
-    def testResultActionz = currentBuild.rawBuild.getAction(TestResultAction.class)
+    //def testResultActionz = currentBuild.rawBuild.getAction(TestResultAction.class)
     def summary = ""
     
     // If the unit tests fail to execute, no unit tests will be sent to Slack
@@ -59,18 +59,22 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
         def total = testResultAction.getTotalCount()
         def failed = testResultAction.getFailCount()
         def skipped = testResultAction.getSkipCount()
-        def failedTests = testResultActionz.getFailedTests()
-        //def failedTestsString = failedTests.join(', ')
+        def failedTests = testResultAction.getFailedTests()
+        def failedTestsString = ""
         echo "These are the failed tests: ${failedTests}"
         //echo "These are the failed tests as a string: ${failedTestsString}"
         
         // If the unit tests found a failed test result it will be included in the Slack message otherwise nah 
         if (failedTests.isEmpty() != true) {
+          for(CaseResult cr : failedTests) {
+            failedTestsString = failedTestsString + "${cr.getFullDisplayName()}: ${cr.getErrorDetails()}\n\t"
+          }
+          
           summary = "Test results:\n\t"
           summary = summary + ("Passed: " + (total - failed - skipped))
           summary = summary + (", Failed: " + failed + " ${testResultAction.failureDiffString}")
           summary = summary + (", Skipped: " + skipped)
-          summary = summary + ("\nFailed tests:\n\t" + failedTests)
+          summary = summary + ("\nFailed tests:\n\t" + failedTestsString)
         } else {
           summary = "Test results:\n\t"
           summary = summary + ("Passed: " + (total - failed - skipped))
