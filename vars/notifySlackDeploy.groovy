@@ -117,7 +117,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   JSONObject appDeployed = new JSONObject();
   appDeployed.put('title', 'Applications Deployed:');
   appDeployed.put('value', application.toString());
-  aappDeployed.put('short', false);
+  appDeployed.put('short', false);
   // JSONObject for commits to pull request
   JSONObject allCommits = new JSONObject();
   allCommits.put('title', 'Changelog:');
