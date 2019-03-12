@@ -28,6 +28,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   def title = "${env.JOB_NAME} - Build #${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
   def branchName = "${GITHUB_BRANCH_NAME}"
+  def application = getApplications()
   
   def commit = "${env.GIT_COMMIT}"
   def author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
@@ -112,6 +113,11 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   commitAuthor.put('title', 'Author:');
   commitAuthor.put('value', author.toString());
   commitAuthor.put('short', true);
+  // JSONObject for application deployed
+  JSONObject appDeployed = new JSONObject();
+  appDeployed.put('title', 'Applications Deployed:');
+  appDeployed.put('value', application.toString());
+  aappDeployed.put('short', false);
   // JSONObject for commits to pull request
   JSONObject allCommits = new JSONObject();
   allCommits.put('title', 'Changelog:');
@@ -122,13 +128,28 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
   testResults.put('title', 'Test Summary:')
   testResults.put('value', testSummary.toString())
   testResults.put('short', false)
-  attachment.put('fields', [branch, commitAuthor, allCommits, testResults]);
+  attachment.put('fields', [branch, commitAuthor, appDeployed, testResults]);
   JSONArray attachments = new JSONArray();
   attachments.add(attachment);
   println attachments.toString()
 
   // Send notifications
   slackSend (color: colorCode, attachments: attachments.toString(), channel: channel)  
+  }
+  
+  // Get the applications being deployed from the environmental variable in Jenkinsfile 
+  @NonCPS 
+  def getApplications () {
+   
+    def appString = "${APPS_DEPLOYED}"
+    def applications = appString.split(',')
+    def deployedApps = ""
+    
+    for (int i = 0; i < applications.size(); i++) {
+         tempApp = applications[i]
+         deployedApps += "${i+1}.) ${tempApp}\n"
+     }
+  return deployedApps
   }
 
   // Iterates through the commit changelog between the remote and target repo's so it can be sent in the Slack message
