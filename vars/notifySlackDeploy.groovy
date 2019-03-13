@@ -46,6 +46,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     color = 'YELLOW'
     colorCode = '#DAA038'
   } else if (buildStatus == 'FAILURE') {
+    application = 'Failed to deploy'
     color = 'RED'
     colorCode = '#A30200'
   } else {
