@@ -150,7 +150,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
     
     for (int i = 0; i < applications.size(); i++) {
          tempApp = applications[i]
-         deployedApps += "• ${tempApp}\n"
+      deployedApps += "- ${tempApp}\n"
      }
   return deployedApps
   }
