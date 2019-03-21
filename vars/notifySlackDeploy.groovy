@@ -15,11 +15,11 @@ import hudson.model.Actionable;
 
 
 
-def call(String buildStatus = 'STARTED', String channel = '#engineering') {
+def call(String buildStatus = 'STARTED', String channel = '#repository') {
 
   // buildStatus of null means success
   buildStatus = buildStatus ?: 'SUCCESS'
-  channel = channel ?: '#engineering'
+  channel = channel ?: '#repository'
 
   // Default values
   def colorName = 'GREEN'
@@ -172,7 +172,7 @@ def call(String buildStatus = 'STARTED', String channel = '#engineering') {
             truncated_msg = entry.msg
             committer = entry.author
             //fullCommit = entry.commitId
-            //commitLink = "https://github.com/ForcuraCo/forcura-coreapp/commit/${fullCommit}"
+            //commitLink = "https://github.com/[path-to-repo]/commit/${fullCommit}"
             commit = entry.commitId.take(7)
             
             // files = entry.file.editType.name
