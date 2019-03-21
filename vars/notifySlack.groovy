@@ -162,7 +162,7 @@ def call(String buildStatus = 'STARTED', String channel = '#repository') {
             truncated_msg = entry.msg
             committer = entry.author
             //fullCommit = entry.commitId
-            //commitLink = "https://github.com/ForcuraCo/forcura-coreapp/commit/${fullCommit}"
+            //commitLink = "https://github.com/[path-to-repo]/commit/${fullCommit}"
             commit = entry.commitId.take(7)
             
             // files = entry.file.editType.name
