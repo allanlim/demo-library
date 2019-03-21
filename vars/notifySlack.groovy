@@ -14,11 +14,11 @@ import hudson.model.Actionable;
 
 
 
-def call(String buildStatus = 'STARTED', String channel = '#engineering') {
+def call(String buildStatus = 'STARTED', String channel = '#repository') {
 
   // buildStatus of null means success
   buildStatus = buildStatus ?: 'SUCCESS'
-  channel = channel ?: '#engineering'
+  channel = channel ?: '#repository'
 
   // Default values
   def colorName = 'GREEN'
