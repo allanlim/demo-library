@@ -177,7 +177,7 @@ def call(String buildStatus = 'STARTED', String channel = '#repository') {
             
             // files = entry.file.editType.name
           //changeString += "<${commitLink}|${commit}> - ${truncated_msg} [${committer}]\n"
-          changeString += "'${commit}' - ${truncated_msg} [${committer}]\n"
+          changeString += "${commit} - ${truncated_msg} [${committer}]\n"
         }
     }
 
