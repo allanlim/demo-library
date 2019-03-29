@@ -29,7 +29,7 @@ def call(String buildStatus = 'STARTED', String channel = '#repository') {
   def title_link = "${env.RUN_DISPLAY_URL}"
   def branchName = "${GITHUB_BRANCH_NAME}"
   def application = getApplications()
-  def deployCommit = "Packaging and deploying application based off GitHub merge commit ${GITHUB_BRANCH_HEAD_SHA}"
+  def deployCommit = "*Packaging and deploying application based off GitHub merge commit ${GITHUB_BRANCH_HEAD_SHA}.*"
   
   def commit = "${env.GIT_COMMIT}"
   def author = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%aN", returnStdout: true).trim()
