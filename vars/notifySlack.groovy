@@ -26,7 +26,7 @@ def call(String buildStatus = 'STARTED', String channel = '#repository') {
   def subject = "${buildStatus} after ${currentBuild.durationString}"
   def title = "${env.JOB_NAME} - Build #${env.BUILD_NUMBER}"
   def title_link = "${env.RUN_DISPLAY_URL}"
-  def pullRequest = "${ghprbPullDescription}"
+  def pullRequest = "*${ghprbPullDescription}*"
   //def branchName = "${env.GIT_BRANCH}"
   def branchName = "${ghprbTargetBranch}"
   
