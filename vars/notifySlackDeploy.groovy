@@ -36,6 +36,10 @@ def call(String buildStatus = 'STARTED', String channel = '#repository') {
   //def committer = bat(script: "@echo off\ngit log -n 1 ${env.GIT_COMMIT} --format=%%cN", returnStdout: true).trim()
   def commits = getChangeString()
   
+  if (branchName == "") {
+    branchName = "${env.GIT_BRANCH}"
+  }
+  
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
     color = 'GREEN'
